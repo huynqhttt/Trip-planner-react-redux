@@ -1,0 +1,14 @@
+.login{
+	&-icon {
+		padding: 4% 0 0;
+	}
+	&-remember{
+		margin: $input-margin-top 0;
+		text-align: left;	
+	}
+	&-info{
+		margin-top: $input-margin-top;
+		margin-bottom: 30px;
+		text-align: justify; 
+	}
+}

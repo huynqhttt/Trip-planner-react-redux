@@ -5,7 +5,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 // App files location
 const PATHS = {
-  app: path.resolve(__dirname, '../src/js'),
+  app: path.resolve(__dirname, '../src'),
   styles: path.resolve(__dirname, '../src/styles'),
   build: path.resolve(__dirname, '../build')
 };
@@ -33,7 +33,7 @@ const sassLoaders = [
 module.exports = {
   env : process.env.NODE_ENV,
   entry: {
-    app: path.resolve(PATHS.app, 'index.js'),
+    app: path.resolve(PATHS.app, 'js/index.js'),
     vendor: ['react']
   },
   output: {

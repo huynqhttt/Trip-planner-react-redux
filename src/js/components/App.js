@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component, PropTypes, Children, cloneElement } from 'react';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import muiTheme from '../muiTheme';
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -7,12 +7,43 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 // http://stackoverflow.com/a/34015469/988941
 injectTapEventPlugin();
 
-const App = ({children}) => (
-	<div>
-		<MuiThemeProvider muiTheme={muiTheme}>
-			{children}
-		</MuiThemeProvider>
-	</div>
-);
+export default class App extends Component {
+	getChildContext(){
+		return{
+			user: this.state.user
+		}
+	}
+	constructor(props, context){
+		super(props, context);
+		this.state = {
+			user: {
+				status: false,
+				username: null,
+				password: null,
+				fullname: null
+			}
+		}
+		this.updateUser = this.updateUser.bind(this);
+	}
+	updateUser(user){
+		this.setState({user: user})
+	}
+	render() {
+		const children = Children.map(this.props.children, (child) => {
+			return cloneElement(child, {
+				updateUser: this.updateUser
+			})
+		})
+		return(
+			<MuiThemeProvider muiTheme={muiTheme}>
+				<div>
+					{children}
+				</div>
+			</MuiThemeProvider>
+		)
+	}
+};
 
-export default App;
+App.childContextTypes = {
+	user: PropTypes.object
+}

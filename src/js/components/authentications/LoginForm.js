@@ -1,11 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 import { TextField, Checkbox, RaisedButton, FlatButton } from 'material-ui';
 import { Link } from 'react-router';
-import * as actions from '../../actions';
+import { users } from '../../../data/users';
+import { ErrorBoard } from '../messageNotification';
 
 class LoginForm extends Component { 
-	constructor(props){
-		super(props)
+	constructor(props, context){
+		super(props, context)
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.checkEmail = this.checkEmail.bind(this);
 		this.require = this.require.bind(this);
@@ -13,21 +14,26 @@ class LoginForm extends Component {
 			errors: null
 		}
 	}
+	componentWillMount(){
+		const { user, router } = this.context;
+		if(user.status){
+			//go to homepage if user has loginned successfully
+			router.push('/home')
+		}
+	}
 	handleSubmit(e){
 		e.preventDefault();
-		const { store } = this.context;
-
-		const username = this.refs.username.input.value;
-		const password = this.refs.password.input.value;
-		const errors = {};
+		const inputName = this.refs.username.input.value;
+		const inputPass = this.refs.password.input.value;
+		let errors = {};
 		//validation
-		if(this.require(username)){
+		if(this.require(inputName)){
 			errors.username = 'Require';
-		} else if (this.checkEmail(username)) {
+		} else if (this.checkEmail(inputName)) {
 			errors.username = 'Invalid Email';
 		}
 
-		if(this.require(password)){
+		if(this.require(inputPass)){
 			errors.password = 'Require';
 		}
 
@@ -36,15 +42,25 @@ class LoginForm extends Component {
 				errors: errors
 			})
 		} else {
-			this.setState({
-				errors: null
+			users.forEach( ({username, password, fullname}) => {
+				if(username.localeCompare(inputName)===0 && password.localeCompare(inputPass)===0){
+					//save user's information to context
+					this.props.updateUser({
+						status: true,
+						username: username,
+						password: password,
+						fullname: fullname
+					});
+					//console.log(this.context.user);
+					this.context.router.push('/home');
+				}
 			})
-			console.log(store)
-			//send user's information to server
-			this.context.router.push('/home');
-			
+			//show error login fail
+			errors.login = 'Username or password is incorrect'
+			this.setState({
+				errors: errors
+			})
 		}
-
 	}
 	require(input){
 		if(!input.trim()){
@@ -59,9 +75,9 @@ class LoginForm extends Component {
 		return false
 	}
 	render(){
-		const { store } = this.context;
 		return (
 			<form>
+				{this.state.errors && this.state.errors.login ? <ErrorBoard text={this.state.errors.login} /> : ''}
 				<TextField
 					floatingLabelText="Username"
 					fullWidth={true}
@@ -91,14 +107,15 @@ class LoginForm extends Component {
 						<FlatButton 
 							label="Create new account"
 							primary={true}
+							onClick={() => this.context.router.push('/signup')}
 						/>
 						|
 						<FlatButton
 							label="Forgot your password"
 							primary={true}
+							onClick={() => this.context.router.push('/forgotPassword')}
 						/>
 				</p>
-				<p>{store.getState().user.title}</p>
 			</form>
 		)
 	}	
@@ -106,7 +123,8 @@ class LoginForm extends Component {
 
 LoginForm.contextTypes = {
 	store: PropTypes.object,
-	router: PropTypes.object
+	router: PropTypes.object,
+	user: PropTypes.object
 }
 
 export default LoginForm;

@@ -2,7 +2,7 @@ import LoginForm from './LoginForm';
 import { Logo } from '../elements';
 import React from 'react';
 
-const Authentications = () => (
+const Authentications = ({ updateUser }) => (
 	<div>
 		<div className="row center-xs">
 			<div 
@@ -13,7 +13,7 @@ const Authentications = () => (
 		</div>
 		<div className="row center-xs">
 			<div className="col-xs-10 col-sm-8 col-md-5 col-lg-3">
-				<LoginForm />
+				<LoginForm updateUser={updateUser} />
 			</div>
 		</div>
 	</div>

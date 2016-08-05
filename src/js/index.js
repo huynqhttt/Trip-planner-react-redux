@@ -10,7 +10,6 @@ import routes from './routes';
 // import promise from 'redux-promise';
 // import reducers from './reducers';
 import store from './store';
-import App from './components/App';
 
 // const createStoreWithMiddleware = applyMiddleware(
 // 	promise
@@ -21,8 +20,6 @@ import App from './components/App';
 const rootElement = document.getElementById('root');
 
 ReactDOM.render(
-	<Provider store={store}>
-		<Router routes={routes} history={browserHistory} />
-	</Provider>,
+	<Router routes={routes} history={browserHistory} />,
 	rootElement
 );
